@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Викторина: Неделя русского языка (6 класс)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500;1,700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slav: {
+                            red: '#9e1b1b',
+                            darkRed: '#6b0f0f',
+                            gold: '#d4af37',
+                            lightGold: '#f9e79f',
+                            parchment: '#fcf8f2',
+                            darkParchment: '#f2e8d5',
+                            borderGold: '#c5a059',
+                            ink: '#2c1810',
+                            accentBlue: '#1b4965'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #2a160e;
+            background-image: 
+                radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px), 
+                radial-gradient(rgba(158, 27, 27, 0.15) 1px, #1a0d08 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            font-family: 'Montserrat', sans-serif;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .parchment-card {
+            background: #fcf8f2;
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(242, 232, 213, 0.8) 100%);
+            border: 2px solid #d4af37;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 50px rgba(212, 175, 55, 0.15);
+            position: relative;
+        }
+
+        .parchment-card::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid rgba(158, 27, 27, 0.35);
+            pointer-events: none;
+            border-radius: 0.75rem;
+        }
+
+        .corner-ornament {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: #9e1b1b;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .corner-tl { top: 8px; left: 8px; border-top: 3px solid; border-left: 3px solid; }
+        .corner-tr { top: 8px; right: 8px; border-top: 3px solid; border-right: 3px solid; }
+        .corner-bl { bottom: 8px; left: 8px; border-bottom: 3px solid; border-left: 3px solid; }
+        .corner-br { bottom: 8px; right: 8px; border-bottom: 3px solid; border-right: 3px solid; }
+
+        .btn-slav {
+            background: linear-gradient(135deg, #9e1b1b 0%, #6b0f0f 100%);
+            border: 1px solid #d4af37;
+            color: #fcf8f2;
+            box-shadow: 0 4px 14px rgba(107, 15, 15, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-slav:active {
+            transform: scale(0.97);
+        }
+
+        .btn-option {
+            background: #ffffff;
+            border: 2px solid #e5d8c3;
+            transition: all 0.2s ease;
+        }
+        .btn-option:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Certificate Print Styling */
+        @media print {
+            body { background: white !important; }
+            #appHeader, #mainContainer, footer { display: none !important; }
+            #certificateModal { display: block !important; position: static !important; background: white !important; }
+        }
+    </style>
+</head>
+<body class="min-h-full text-slav-ink flex flex-col justify-between p-3 sm:p-5 select-none">
+
+    <header id="appHeader" class="w-full max-w-lg mx-auto flex items-center justify-between py-2 px-4 bg-slav-darkRed/90 backdrop-blur-md border border-slav-gold/60 rounded-full mb-3 text-slav-lightGold shadow-xl z-20">
+        <div class="flex items-center space-x-2">
+            <span class="text-lg">📜</span>
+            <span class="font-serif text-sm sm:text-base tracking-wider font-bold text-slav-gold">Неделя Словесности</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="soundToggleBtn" onclick="toggleSound()" class="p-1.5 rounded-full hover:bg-slav-red/60 transition text-sm" title="Звук">
+                <span id="soundIcon">🔊</span>
+            </button>
+            <span class="bg-slav-gold/20 border border-slav-gold/40 px-2.5 py-0.5 rounded-full text-slav-lightGold text-[11px] font-semibold">6 Класс</span>
+        </div>
+    </header>
+
+    <main id="mainContainer" class="w-full max-w-lg mx-auto my-auto flex-1 flex flex-col justify-center relative">
+
+        <!-- ================= START SCREEN ================= -->
+        <div id="startScreen" class="parchment-card rounded-2xl p-5 sm:p-6 text-center animate-pop">
+            <div class="corner-ornament corner-tl"></div>
+            <div class="corner-ornament corner-tr"></div>
+            <div class="corner-ornament corner-bl"></div>
+            <div class="corner-ornament corner-br"></div>
+
+            <div class="w-20 h-20 mx-auto mb-3 bg-slav-red/10 rounded-full flex items-center justify-center border-2 border-slav-gold shadow-inner">
+                <span class="text-4xl">✒️</span>
+            </div>
+
+            <h1 class="font-serif text-2xl sm:text-3xl font-bold text-slav-red mb-1 leading-snug">
+                Грамотей-Викторина
+            </h1>
+            <p class="text-[11px] uppercase tracking-widest text-slav-ink/70 font-bold mb-4">
+                К неделе русского языка • 6 класс (30 вопросов)
+            </p>
+
+            <!-- Mode Selector -->
+            <div class="mb-4 text-left space-y-2">
+                <label class="block text-xs font-bold text-slav-ink/80 ml-1">Режим прохождения:</label>
+                <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+                    <button id="modeStandard" onclick="setMode('standard')" class="p-2 rounded-xl border-2 border-slav-gold bg-white text-[11px] sm:text-xs font-bold text-slav-red shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-sm sm:text-base mb-0.5">🏆</span>
+                        <span>Олимпиада</span>
+                        <span class="text-[9px] text-slav-ink/60 font-normal">10 вопросов</span>
+                    </button>
+                    <button id="modeMarathon" onclick="setMode('marathon')" class="p-2 rounded-xl border-2 border-slav-borderGold/40 bg-white/70 text-[11px] sm:text-xs font-bold text-slav-ink/80 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-sm sm:text-base mb-0.5">📜</span>
+                        <span>Марафон</span>
+                        <span class="text-[9px] text-slav-ink/60 font-normal">Все 30вопр.</span>
+                    </button>
+                    <button id="modeBlitz" onclick="setMode('blitz')" class="p-2 rounded-xl border-2 border-slav-borderGold/40 bg-white/70 text-[11px] sm:text-xs font-bold text-slav-ink/80 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-sm sm:text-base mb-0.5">⚡</span>
+                        <span>Блиц</span>
+                        <span class="text-[9px] text-slav-ink/60 font-normal">20 с / вопр</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Selector -->
+            <div class="mb-4 text-left">
+                <label for="categorySelect" class="block text-xs font-bold text-slav-ink/80 mb-1 ml-1">Раздел языкознания:</label>
+                <select id="categorySelect" class="w-full px-3 py-2 text-xs rounded-xl border-2 border-slav-gold/60 bg-white text-slav-ink font-medium focus:outline-none focus:border-slav-red">
+                    <option value="all">🌐 Все разделы (Смешанный тур)</option>
+                    <option value="Орфоэпия (Ударения)">🎙️ Орфоэпия (Ударения)</option>
+                    <option value="Чередующиеся гласные">🌱 Чередующиеся гласные</option>
+                    <option value="Приставки ПРЕ- и ПРИ-">🔤 Приставки ПРЕ- и ПРИ-</option>
+                    <option value="Морфология (Числительные)">🔢 Морфология (Числительные)</option>
+                    <option value="Разносклоняемые существительные">📚 Разносклоняемые существительные</option>
+                    <option value="Суффиксы и правописание">✏️ Суффиксы и окончания</option>
+                    <option value="НЕ с частями речи">⛔ НЕ с различными частями речи</option>
+                    <option value="Разделительные Ъ и Ь знаки">🧱 Разделительные Ъ и Ь знаки</option>
+                    <option value="Мягкий знак после шипящих">🤫 Мягкий знак после шипящих</option>
+                    <option value="Лексика и Архаизмы">📖 Лексика и Архаизмы</option>
+                    <option value="Фразеология">💡 Фразеология</option>
+                    <option value="Синтаксис и Пунктуация">✍️️ Синтаксис и Пунктуация</option>
+                </select>
+            </div>
+
+            <!-- User Name Input -->
+            <div class="mb-5 text-left">
+                <label for="userName" class="block text-xs font-bold text-slav-ink/80 mb-1 ml-1">
+                    Имя и фамилия участника:
+                </label>
+                <input type="text" id="userName" placeholder="Например: Василиса Премудрая" 
+                    class="w-full px-4 py-2.5 text-sm rounded-xl border-2 border-slav-gold/60 bg-white text-slav-ink focus:outline-none focus:border-slav-red transition shadow-inner">
+            </div>
+
+            <button onclick="startQuiz()" class="btn-slav w-full py-3.5 rounded-xl font-bold text-sm tracking-wider shadow-lg uppercase flex items-center justify-center space-x-2">
+                <span>Начать Испытание</span>
+                <span class="text-base">➔</span>
+            </button>
+        </div>
+
+        <!-- ================= QUIZ SCREEN ================= -->
+        <div id="quizScreen" class="hidden parchment-card rounded-2xl p-4 sm:p-5 animate-pop">
+            <div class="corner-ornament corner-tl"></div>
+            <div class="corner-ornament corner-tr"></div>
+            <div class="corner-ornament corner-bl"></div>
+            <div class="corner-ornament corner-br"></div>
+
+            <!-- Quiz Header Bar -->
+            <div class="mb-3">
+                <div class="flex justify-between items-center text-xs font-bold mb-1">
+                    <span id="questionCategory" class="text-slav-red uppercase tracking-wider font-serif">Категория</span>
+                    <div class="flex items-center space-x-2">
+                        <span id="timerBadge" class="hidden bg-slav-red text-white px-2 py-0.5 rounded-md text-[11px] font-mono font-bold animate-pulse">⏱️ 20s</span>
+                        <span class="text-slav-ink/70"><span id="currentQNum">1</span>/<span id="totalQNum">30</span></span>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full h-2.5 bg-slav-darkParchment rounded-full overflow-hidden border border-slav-gold/50">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-slav-gold to-slav-red transition-all duration-300 rounded-full" style="width: 3%"></div>
+                </div>
+            </div>
+
+            <!-- Lifelines Bar -->
+            <div class="flex items-center justify-between mb-3 bg-slav-darkParchment/50 p-2 rounded-xl border border-slav-gold/30">
+                <div class="flex items-center space-x-2">
+                    <button id="lifeline5050" onclick="use5050()" class="px-2.5 py-1 bg-white border border-slav-gold rounded-lg text-[11px] font-bold text-slav-red hover:bg-slav-gold/10 transition shadow-sm flex items-center space-x-1">
+                        <span>🪄 50/50</span>
+                    </button>
+                    <button id="lifelineSecondChance" onclick="useSecondChance()" class="px-2.5 py-1 bg-white border border-slav-gold rounded-lg text-[11px] font-bold text-slav-accentBlue hover:bg-slav-gold/10 transition shadow-sm flex items-center space-x-1">
+                        <span>🛡️️ Второй шанс</span>
+                    </button>
+                </div>
+                <!-- Combo Streak Badge -->
+                <div id="streakBadge" class="text-[11px] font-bold text-slav-red flex items-center space-x-1 opacity-0 transition-opacity">
+                    <span>🔥 Серия:</span>
+                    <span id="streakCount">0</span>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="mb-3 bg-white/80 rounded-xl p-3.5 border border-slav-gold/40 shadow-sm min-h-[85px] flex items-center justify-center">
+                <h2 id="questionText" class="font-serif text-base sm:text-lg font-bold text-slav-ink text-center leading-snug">
+                    Загрузка вопроса...
+                </h2>
+            </div>
+
+            <!-- Answer Options -->
+            <div id="optionsContainer" class="space-y-2 mb-3">
+                <!-- Dynamic options -->
+            </div>
+
+            <!-- Explanation Box -->
+            <div id="explanationBox" class="hidden bg-slav-darkParchment border-l-4 border-slav-gold rounded-r-xl p-3 text-xs mb-3 animate-pop shadow-inner">
+                <div class="font-bold text-slav-red flex items-center mb-1">
+                    <span class="mr-1">💡</span> Разбор филолога:
+                </div>
+                <p id="explanationText" class="text-slav-ink/90 leading-relaxed">
+                    Правило появится здесь.
+                </p>
+            </div>
+
+            <!-- Action Button -->
+            <button id="nextBtn" onclick="nextQuestion()" class="hidden btn-slav w-full py-3 rounded-xl font-bold text-xs tracking-wider uppercase shadow-md flex items-center justify-center space-x-1">
+                <span>Следующий Вопрос</span>
+                <span>➔</span>
+            </button>
+        </div>
+
+        <!-- ================= RESULT SCREEN ================= -->
+        <div id="resultScreen" class="hidden parchment-card rounded-2xl p-5 text-center animate-pop">
+            <div class="corner-ornament corner-tl"></div>
+            <div class="corner-ornament corner-tr"></div>
+            <div class="corner-ornament corner-bl"></div>
+            <div class="corner-ornament corner-br"></div>
+
+            <div class="inline-block bg-slav-gold/20 text-slav-red border border-slav-gold rounded-full px-3.5 py-0.5 text-xs font-bold uppercase tracking-widest mb-2">
+                Итоги испытания
+            </div>
+
+            <h2 id="resultTitle" class="font-serif text-2xl font-bold text-slav-ink mb-0.5">
+                Поздравляем!
+            </h2>
+            <p id="resultPlayerName" class="text-xs text-slav-ink/70 font-semibold mb-3">Ученик 6 класса</p>
+
+            <!-- Score Circle -->
+            <div class="w-28 h-28 mx-auto mb-3 rounded-full bg-gradient-to-br from-slav-gold to-slav-red p-1 shadow-xl">
+                <div class="w-full h-full bg-slav-parchment rounded-full flex flex-col items-center justify-center border-2 border-white">
+                    <span id="finalScore" class="font-serif text-3xl font-bold text-slav-red leading-none">0/30</span>
+                    <span id="scorePercent" class="text-[10px] font-bold text-slav-ink/60 mt-1">0% верных</span>
+                </div>
+            </div>
+
+            <!-- Rank Title Box -->
+            <div class="bg-white rounded-xl p-3 border border-slav-gold/50 shadow-sm mb-4">
+                <div class="text-[11px] text-slav-ink/60 mb-0.5">Присвоено почетное звание:</div>
+                <div id="rankTitle" class="font-serif text-base font-bold text-slav-red">
+                    Знаток Русской Словесности
+                </div>
+            </div>
+
+            <!-- Action Buttons Grid -->
+            <div class="space-y-2">
+                <button onclick="openCertificate()" class="w-full py-3 bg-slav-gold text-slav-ink font-bold text-xs rounded-xl shadow-md uppercase tracking-wider border border-slav-borderGold hover:bg-slav-lightGold transition flex items-center justify-center space-x-2">
+                    <span>📜 Открыть Грамоту Знатока</span>
+                </button>
+                <button onclick="restartQuiz()" class="btn-slav w-full py-3 rounded-xl font-bold text-xs tracking-wider uppercase shadow-md">
+                    Пройти Снова 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ================= CERTIFICATE MODAL ================= -->
+    <div id="certificateModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-3 overflow-y-auto flex items-center justify-center">
+        <div class="relative w-full max-w-xl bg-slav-parchment border-8 border-double border-slav-gold p-6 rounded-xl shadow-2xl text-center text-slav-ink my-auto">
+            
+            <button onclick="closeCertificate()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slav-red text-white font-bold text-sm shadow flex items-center justify-center">✕</button>
+
+            <!-- Certificate Header -->
+            <div class="border-2 border-slav-red p-4 rounded-lg bg-gradient-to-b from-white to-slav-darkParchment/40">
+                <div class="text-3xl mb-1">📜</div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slav-red uppercase tracking-widest mb-1">
+                    ПОЧЁТНАЯ ГРАМОТА
+                </h2>
+                <p class="text-[10px] uppercase tracking-widest text-slav-gold font-bold mb-4">
+                    Неделя русского языка • 6 Класс
+                </p>
+
+                <p class="text-xs italic text-slav-ink/80 mb-1">Настоящим подтверждается, что</p>
+                <h3 id="certPlayerName" class="font-serif text-xl sm:text-2xl font-bold text-slav-ink border-b-2 border-slav-gold/60 inline-block px-4 pb-1 mb-3">
+                    Ученик
+                </h3>
+
+                <p class="text-xs text-slav-ink/90 leading-relaxed mb-4 max-w-md mx-auto">
+                    успешно прошёл(ла) олимпиадное испытание повышенной сложности по русской словесности, показав глубокие знания орфоэпии, морфологии, синтаксиса, пунктуации и лексики.
+                </p>
+
+                <div class="bg-white/80 p-3 rounded-lg border border-slav-gold/40 mb-4 inline-block">
+                    <div class="text-[10px] text-slav-ink/60 uppercase font-bold">Присвоенный статус:</div>
+                    <div id="certRank" class="font-serif text-lg font-bold text-slav-red">
+                        Магистр Словарного Древа
+                    </div>
+                </div>
+
+                <!-- Footer with Seal and Signature -->
+                <div class="flex justify-between items-end pt-3 border-t border-slav-gold/40 text-[10px] text-slav-ink/70">
+                    <div class="text-left">
+                        <p class="font-bold">Оргкомитет Недели Языка</p>
+                        <p id="certDate">Дата: 01.10.2026</p>
+                    </div>
+                    <div class="w-12 h-12 bg-slav-red rounded-full border-2 border-slav-gold flex items-center justify-center text-white font-serif font-bold text-xs shadow-md">
+                        Печать
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="window.print()" class="mt-4 px-6 py-2.5 bg-slav-red text-white rounded-xl font-bold text-xs uppercase shadow hover:bg-slav-darkRed transition">
+                🖨️️ Распечатать / Сохранить
+            </button>
+        </div>
+    </div>
+
+    <footer id="appFooter" class="w-full max-w-lg mx-auto text-center text-[10px] text-slav-lightGold/70 py-2">
+        Олимпиадная викторина по русскому языку • 6 класс • 30 вопросов
+    </footer>
+
+    <script>
+        const QUESTION_BANK = [
+            // 1. Орфоэпия
+            {
+                category: "Орфоэпия (Ударения)",
+                question: "В каком из приведённых ниже слов ВЕРНО выделена буква, обозначающая ударный гласный звук?",
+                options: [
+                    { text: "зво́нит", isCorrect: false },
+                    { text: "кра́сивее", isCorrect: true },
+                    { text: "ба́ловать", isCorrect: false },
+                    { text: "торты́", isCorrect: false }
+                ],
+                explanation: "Правильно: краси́вее (ударение сохраняется на корне 'красив'). Запомните: звони́т, балова́ть, то́рты."
+            },
+            {
+                category: "Орфоэпия (Ударения)",
+                question: "В каком слове ударение падает на ПОСЛЕДНИЙ слог?",
+                options: [
+                    { text: "жалюзи́", isCorrect: true },
+                    { text: "ку́хонный", isCorrect: false },
+                    { text: "сливовый", isCorrect: false },
+                    { text: "сре́дства", isCorrect: false }
+                ],
+                explanation: "Правильно: жалюзи́ (заимствовано из французского языка, ударение всегда на последний слог). В других словах: ку́хонный, сли́вовый, сре́дства."
+            },
+            // 2. Чередующиеся гласные
+            {
+                category: "Чередующиеся гласные",
+                question: "В каком слове на месте пропуска пишется буква О?",
+                options: [
+                    { text: "Прик...сновение", isCorrect: true },
+                    { text: "Сл...гаемое", isCorrect: false },
+                    { text: "Раст...ние", isCorrect: false },
+                    { text: "Соб...рать", isCorrect: false }
+                ],
+                explanation: "В корне -КОС-/-КАС- пишется О, если после корня нет суффикса -А- (прикосновение). В остальных: слагаемое (-ЛАГ-), растение (перед СТ), собирать (есть суффикс -А-)."
+            },
+            {
+                category: "Чередующиеся гласные",
+                question: "Укажите слово с чередующейся гласной в корне, где пишется буква И:",
+                options: [
+                    { text: "Зам...рать от восторга", isCorrect: true },
+                    { text: "Зам...реть от страха", isCorrect: false },
+                    { text: "Бл...стеть на солнце", isCorrect: false },
+                    { text: "Пост...лить ковёр", isCorrect: false }
+                ],
+                explanation: "В корнях с чередованием -МЕР-/-МИР- пишется И, если за корнем следует суффикс -А- (замирать). В остальных: замереть, блестеть, постелить."
+            },
+            {
+                category: "Чередующиеся гласные",
+                question: "В каком слове пишется буква А?",
+                options: [
+                    { text: "З...рница вспыхнула", isCorrect: true },
+                    { text: "Заг...рать на пляже", isCorrect: false },
+                    { text: "Сг...реть дотла", isCorrect: false },
+                    { text: "Прик...снуться к стене", isCorrect: false }
+                ],
+                explanation: "В корне -ЗАР-/-ЗОР- без ударения пишется А (зарни́ца). В корне -ГОР-/-ГАР- без ударения пишется О (загора́ть, сгоре́ть). В -КОС-/-КАС- без -А- пишется О."
+            },
+            // 3. Приставки ПРЕ- и ПРИ-
+            {
+                category: "Приставки ПРЕ- и ПРИ-",
+                question: "В каком ряду во всех словах пропущена буква И?",
+                options: [
+                    { text: "Пр...брежный, пр...открыть, пр...соединить", isCorrect: true },
+                    { text: "Пр...града, пр...мудрый, пр...одолеть", isCorrect: false },
+                    { text: "Пр...клонить (колени), пр...образить, пр...школьный", isCorrect: false },
+                    { text: "Пр...ступить (закон), пр...вязать, пр...бежать", isCorrect: false }
+                ],
+                explanation: "ПРИ- пишется в значениях: близость (прибрежный), неполнота действия (приоткрыть), присоединение (присоединить). В словах преграда, премудрый, непреодолимый пишется ПРЕ-."
+            },
+            {
+                category: "Приставки ПРЕ- и ПРИ-",
+                question: "Укажите вариант, где приставка ПРЕ- имеет значение «очень» (высшая степень качества):",
+                options: [
+                    { text: "Пр...добрый человек", isCorrect: true },
+                    { text: "Пр...морский край", isCorrect: false },
+                    { text: "Пр...открыть форточку", isCorrect: false },
+                    { text: "Пр...бывать на станцию", isCorrect: false }
+                ],
+                explanation: "В слове 'предобрый' приставка ПРЕ- близка по значению к слову 'очень' (очень добрый). В остальном: приморский (близость), приоткрыть (неполнота), прибывать (приближение)."
+            },
+            {
+                category: "Приставки ПРЕ- и ПРИ-",
+                question: "В каком варианте верно указано значение для слова «ПРЕБЫВАТЬ» (с буквой Е)?",
+                options: [
+                    { text: "Находиться где-либо (в городе, в радости)", isCorrect: true },
+                    { text: "Приезжать или приходить в место назначения", isCorrect: false },
+                    { text: "Присоединять элемент к детали", isCorrect: false },
+                    { text: "Слегка открывать дверь", isCorrect: false }
+                ],
+                explanation: "ПрЕбывать — находиться в состоянии или месте (пребывать в санатории). ПрИбывать — приближаться (поезд прибывает)."
+            },
+            // 4. Морфология (Числительные)
+            {
+                category: "Морфология (Числительные)",
+                question: "Укажите вариант с ОШИБКОЙ в форме имени числительного:",
+                options: [
+                    { text: "с шестистами учениками", isCorrect: true },
+                    { text: "около пятисот рублей", isCorrect: false },
+                    { text: "к двум тысячам двадцатому году", isCorrect: false },
+                    { text: "в восьмистах метрах", isCorrect: false }
+                ],
+                explanation: "Грамматическая ошибка: 'с шестистами'. Правильно в творительном падеже сложного числительного: 'с шестьюстами' (склоняются обе части: шестью + стами)."
+            },
+            {
+                category: "Морфология (Числительные)",
+                question: "В каком варианте ответа слово 'ПОЛ-' пишется через ДЕФИС?",
+                options: [
+                    { text: "(пол)лимона", isCorrect: true },
+                    { text: "(пол)тетради", isCorrect: false },
+                    { text: "(пол)часа", isCorrect: false },
+                    { text: "(полу)финал", isCorrect: false }
+                ],
+                explanation: "ПОЛ- пишется через дефис перед буквой L (пол-лимона), перед прописной буквой (пол-Москвы) и перед гласной (пол-яблока). Перед согласными — слитно (полтетради)."
+            },
+            {
+                category: "Морфология (Числительные)",
+                question: "С какими существительными НЕ сочетаются собирательные числительные (двое, трое, четверо)?",
+                options: [
+                    { text: "Существительные женского рода (девочки, ученицы)", isCorrect: true },
+                    { text: "Существительные мужского рода (мальчики, студенты)", isCorrect: false },
+                    { text: "Существительные, имеющие форму только мн.ч. (сутки, ножницы)", isCorrect: false },
+                    { text: "Детёныши животных (медвежата, тигрята)", isCorrect: false }
+                ],
+                explanation: "Собирательные числительные НЕ употребляются с существительными женского рода. Правильно: 'три девочки' (не 'трое девочек')."
+            },
+            // 5. Разносклоняемые существительные
+            {
+                category: "Разносклоняемые существительные",
+                question: "Укажите существительное, относящееся к группе РАЗНОСКЛОНЯЕМЫХ:",
+                options: [
+                    { text: "Знамя", isCorrect: true },
+                    { text: "Армия", isCorrect: false },
+                    { text: "Семья", isCorrect: false },
+                    { text: "Аллея", isCorrect: false }
+                ],
+                explanation: "К разносклоняемым существительным относятся 10 существительных на -МЯ (бремя, время, вымя, знамя, имя, пламя, племя, семя, стремя, темя) и слово 'путь'."
+            },
+            {
+                category: "Разносклоняемые существительные",
+                question: "В каком слове при склонении во всех косвенных падежах появляется суффикс -ЕН-?",
+                options: [
+                    { text: "Имя (нет именИ, об именИ)", isCorrect: true },
+                    { text: "Земля", isCorrect: false },
+                    { text: "Статья", isCorrect: false },
+                    { text: "Песня", isCorrect: false }
+                ],
+                explanation: "У разносклоняемых существительных на -МЯ при склонении появляется суффикс -ЕН- (имя — имЕНИ, знамя — знамЕНИ)."
+            },
+            // 6. Суффиксы и окончания
+            {
+                category: "Суффиксы и правописание",
+                question: "В каком слове пишется суффикс -К- (а не -СК-)?",
+                options: [
+                    { text: "Немец...кий", isCorrect: true },
+                    { text: "Матрос...кий", isCorrect: false },
+                    { text: "Француз...кий", isCorrect: false },
+                    { text: "Город...кой", isCorrect: false }
+                ],
+                explanation: "Суффикс -К- пишется, если прилагательное образовано от существительного с основой на К, Ч, Ц (немец -> немецкий) или имеет краткую форму (резкий - резок)."
+            },
+            {
+                category: "Суффиксы и правописание",
+                question: "В каком слове на месте пропуска под ударением пишется буква О?",
+                options: [
+                    { text: "Камыш...вый шуршащий луг", isCorrect: true },
+                    { text: "Плюш...вый медвежонок", isCorrect: false },
+                    { text: "Глянц...вая бумага", isCorrect: false },
+                    { text: "Ситец...вое платье", isCorrect: false }
+                ],
+                explanation: "В суффиксах и окончаниях прилагательных и существительных после шипящих и Ц под ударением пишется О (камышо́вый, ежо́вый), а без ударения — Е (плю́шевый, глянцевый)."
+            },
+            {
+                category: "Суффиксы и правописание",
+                question: "В каком отимённом прилагательном пишется ОДНА буква Н?",
+                options: [
+                    { text: "Соловьин...ый", isCorrect: true },
+                    { text: "Оловян...ый", isCorrect: false },
+                    { text: "Синхрон...ый", isCorrect: false },
+                    { text: "Картин...ый", isCorrect: false }
+                ],
+                explanation: "В суффиксах -ИН-, -АН-, -ЯН- прилагательных пишется одна Н (соловьиный, песчаный). Исключения: стеклянный, оловянный, деревянный."
+            },
+            {
+                category: "Суффиксы и правописание",
+                question: "В каком слове пишется НН?",
+                options: [
+                    { text: "Решён...ая задача", isCorrect: true },
+                    { text: "Печён...ый картофель", isCorrect: false },
+                    { text: "Кош...еный луг", isCorrect: false },
+                    { text: "Ветр...ный день", isCorrect: false }
+                ],
+                explanation: "В слове 'решённая' пишется НН, так как оно образовано от глагола совершенного вида (решить - что сделать?). 'Ветреный' — исключение с одной Н."
+            },
+            // 7. НЕ с различными частями речи
+            {
+                category: "НЕ с частями речи",
+                question: "В каком варианте ответа НЕ со словом пишется СЛИТНО?",
+                options: [
+                    { text: "(Не)ряшливый ученик", isCorrect: true },
+                    { text: "(Не)правда, а ложь", isCorrect: false },
+                    { text: "Вовсе (не)интересный фильм", isCorrect: false },
+                    { text: "Далеко (не)лёгкий выбор", isCorrect: false }
+                ],
+                explanation: "Слово 'неряшливый' без НЕ не употребляется, поэтому пишется слитно. В остальных случаях есть противопоставление с союзом А или усилительные слова (вовсе не, далеко не)."
+            },
+            {
+                category: "НЕ с частями речи",
+                question: "Укажите предложение, где НЕ с прилагательным пишется РАЗДЕЛЬНО:",
+                options: [
+                    { text: "Нам встретилась совсем не глубокая, а мелкая речушка.", isCorrect: true },
+                    { text: "Он принял нелёгкое решение.", isCorrect: false },
+                    { text: "День выдался ненастным и холодным.", isCorrect: false },
+                    { text: "Это был небрежно написанный конспект.", isCorrect: false }
+                ],
+                explanation: "НЕ с прилагательным пишется раздельно, если есть или подразумевается противопоставление с союзом А (не глубокая, а мелкая)."
+            },
+            // 8. Разделительные Ъ и Ь знаки
+            {
+                category: "Разделительные Ъ и Ь знаки",
+                question: "В каком слове на месте пропуска пишется Ъ (твёрдый знак)?",
+                options: [
+                    { text: "Об...явление", isCorrect: true },
+                    { text: "С...экономить", isCorrect: false },
+                    { text: "В...юн", isCorrect: false },
+                    { text: "Сер...ёзный", isCorrect: false }
+                ],
+                explanation: "Ъ пишется после приставок на согласный перед буквами Е, Ё, Ю, Я (об-ъ-явление). Сэкономить пишется без Ъ (перед Э). Вьюн и серьёзный содержат Ь в корне."
+            },
+            {
+                category: "Разделительные Ъ и Ь знаки",
+                question: "В каком из слов разделительный Ъ знак НЕ ПИШЕТСЯ?",
+                options: [
+                    { text: "С...экономить время", isCorrect: true },
+                    { text: "Двух...ярусный", isCorrect: false },
+                    { text: "Под...езд", isCorrect: false },
+                    { text: "Раз...ярённый", isCorrect: false }
+                ],
+                explanation: "Разделительный Ъ пишется после приставок (и числительных двух-, трёх-) перед буквами Е, Ё, Ю, Я. Перед буквой Э твёрдый знак не ставится (сэкономить)."
+            },
+            // 9. Мягкий знак после шипящих
+            {
+                category: "Мягкий знак после шипящих",
+                question: "На конце какого слова Ь знак НЕ ПИШЕТСЯ?",
+                options: [
+                    { text: "Мяч... (футбольный)", isCorrect: true },
+                    { text: "Стричь... (газон)", isCorrect: false },
+                    { text: "Беречь... (природу)", isCorrect: false },
+                    { text: "Рожь... (в поле)", isCorrect: false }
+                ],
+                explanation: "В слове 'мяч' Ь не пишется, так как это существительное мужского рода 2-го склонения. У существительных 3-го склонения (рожь) и глаголов (стричь, беречь) Ь сохраняется."
+            },
+            {
+                category: "Мягкий знак после шипящих",
+                question: "В каком ряду во всех словах на конце после шипящих пишется Ь?",
+                options: [
+                    { text: "Полночь..., беречь..., назначь...", isCorrect: true },
+                    { text: "Врач..., туч..., пахуч...", isCorrect: false },
+                    { text: "Плач..., товарищ..., кумач...", isCorrect: false },
+                    { text: "Горяч..., много туч..., камыш...", isCorrect: false }
+                ],
+                explanation: "Ь пишется у существительных 3-го склонения (полночь), у глаголов инфинитива (беречь) и повелительного наклонения (назначь). Краткие прилагательные (пахуч) и сущ. 2-го скл./мн.ч. Р.п. (врач, туч) пишутся без Ь."
+            },
+            // 10. Лексика и Архаизмы
+            {
+                category: "Лексика и Архаизмы",
+                question: "Что означало в древнерусском языке устаревшее слово «ЛАНИТЫ»?",
+                options: [
+                    { text: "Щёки", isCorrect: true },
+                    { text: "Губы", isCorrect: false },
+                    { text: "Глаза", isCorrect: false },
+                    { text: "Плечи", isCorrect: false }
+                ],
+                explanation: "«Ланиты» — это устаревшее слово (архаизм), обозначающее щёки. (Губы — уста, глаза — очи, плечи — рамена, лоб — чело)."
+            },
+            {
+                category: "Лексика и Архаизмы",
+                question: "Укажите устаревшее слово, обозначающее 'ПАЛЕЦ':",
+                options: [
+                    { text: "Перст", isCorrect: true },
+                    { text: "Чело", isCorrect: false },
+                    { text: "Выя", isCorrect: false },
+                    { text: "Десница", isCorrect: false }
+                ],
+                explanation: "Перст — устаревшее название пальца (отсюда 'перстень', 'наперсток'). Чело — лоб, выя — шея, десница — правая рука."
+            },
+            // 11. Фразеология
+            {
+                category: "Фразеология",
+                question: "Какое значение имеет фразеологизм «СПУСТЯ РУКАВА»?",
+                options: [
+                    { text: "Небрежно и кое-как", isCorrect: true },
+                    { text: "Усердно и старательно", isCorrect: false },
+                    { text: "Быстро и оперативно", isCorrect: false },
+                    { text: "Очень медленно", isCorrect: false }
+                ],
+                explanation: "«Работать спустя рукава» — делать что-либо небрежно, без должного старания. Антоним: «засучив рукава»."
+            },
+            {
+                category: "Фразеология",
+                question: "Укажите фразеологизм, имеющий значение 'БЕЗДЕЛЬНИЧАТЬ':",
+                options: [
+                    { text: "Бить баклуши", isCorrect: true },
+                    { text: "Водить за нос", isCorrect: false },
+                    { text: "Считать ворон", isCorrect: false },
+                    { text: "Заговаривать зубы", isCorrect: false }
+                ],
+                explanation: "«Бить баклуши» означает бездельничать, заниматься пустяковым делом (первоначально — раскалывать чурбачки для ложек)."
+            },
+            // 12. Местоимения
+            {
+                category: "НЕ с частями речи",
+                question: "В каком варианте ответа НЕ (или НИ) с местоимением пишется СЛИТНО?",
+                options: [
+                    { text: "(не)кого винить", isCorrect: true },
+                    { text: "(не)(с)кем поговорить", isCorrect: false },
+                    { text: "(ни)(у)кого не спрашивал", isCorrect: false },
+                    { text: "(ни)(к)кому не обращался", isCorrect: false }
+                ],
+                explanation: "Отрицательные местоимения пишутся слитно при отсутствии предлога (некого, нечего, никого). Если есть предлог, пишется в три слова: не с кем, ни у кого, ни к кому."
+            },
+            // 13. Синтаксис и Пунктуация
+            {
+                category: "Синтаксис и Пунктуация",
+                question: "Укажите предложение с прямой речью, где знаки препинания расставлены ВЕРНО:",
+                options: [
+                    { text: "«Завтра будет праздник» — сказал учитель.", isCorrect: true },
+                    { text: "«Завтра будет праздник» - Сказал учитель.", isCorrect: false },
+                    { text: "Учитель сказал: «Завтра будет праздник»", isCorrect: false },
+                    { text: "«Завтра будет праздник!»: сказал учитель.", isCorrect: false }
+                ],
+                explanation: "Схема прямой речи перед словами автора: «П» — а. Запятая и тире ставятся после кавычек, а слова автора пишутся со строчной буквы."
+            },
+            {
+                category: "Синтаксис и Пунктуация",
+                question: "В каком предложении есть ОБРАЩЕНИЕ (знаки препинания не расставлены)?",
+                options: [
+                    { text: "Спой нам песню перепёлка.", isCorrect: true },
+                    { text: "Взошла луна и осветила лес.", isCorrect: false },
+                    { text: "Ребята быстро решили сложную задачу.", isCorrect: false },
+                    { text: "Наступили осенние холода.", isCorrect: false }
+                ],
+                explanation: "В предложении 'Спой нам песню, перепёлка' слово 'перепёлка' является обращением (называет того, к кому обращаются) и выделяется запятой."
+            }
+        ];
+
+        let activeQuestions = [];
+        let currentQIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let playerName = "";
+        let selectedMode = "standard"; // 'standard', 'marathon', 'blitz'
+        let selectedCategory = "all";
+        let isAnswered = false;
+        let soundEnabled = true;
+        let timerInterval = null;
+        let timeLeft = 20;
+
+        let used5050 = false;
+        let usedSecondChance = false;
+        let hasSecondChanceActive = false;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, now);
+                    osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(160, now + 0.1);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.log("Audio non-interactive or muted");
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundIcon').innerText = soundEnabled ? "🔊" : "🔇";
+        }
+
+        function setMode(mode) {
+            playSound('click');
+            selectedMode = mode;
+            const btnStd = document.getElementById('modeStandard');
+            const btnMarathon = document.getElementById('modeMarathon');
+            const btnBlitz = document.getElementById('modeBlitz');
+
+            const activeStyle = "p-2 rounded-xl border-2 border-slav-gold bg-white text-[11px] sm:text-xs font-bold text-slav-red shadow-sm flex flex-col items-center justify-center";
+            const inactiveStyle = "p-2 rounded-xl border-2 border-slav-borderGold/40 bg-white/70 text-[11px] sm:text-xs font-bold text-slav-ink/80 shadow-sm flex flex-col items-center justify-center";
+
+            btnStd.className = mode === 'standard' ? activeStyle : inactiveStyle;
+            btnMarathon.className = mode === 'marathon' ? activeStyle : inactiveStyle;
+            btnBlitz.className = mode === 'blitz' ? activeStyle : inactiveStyle;
+        }
+
+        function startQuiz() {
+            const rawName = document.getElementById('userName').value.trim();
+            playerName = rawName !== "" ? rawName : "Ученик 6 класса";
+            selectedCategory = document.getElementById('categorySelect').value;
+
+            playSound('click');
+
+            // Filter questions by category
+            if (selectedCategory === 'all') {
+                activeQuestions = [...QUESTION_BANK];
+            } else {
+                activeQuestions = QUESTION_BANK.filter(q => q.category === selectedCategory);
+                if (activeQuestions.length === 0) activeQuestions = [...QUESTION_BANK];
+            }
+
+            // Shuffle questions
+            activeQuestions.sort(() => Math.random() - 0.5);
+
+            // Slice according to mode
+            if (selectedMode === 'standard') {
+                activeQuestions = activeQuestions.slice(0, 10);
+            } else if (selectedMode === 'blitz') {
+                activeQuestions = activeQuestions.slice(0, 15);
+            }
+            // 'marathon' uses all available questions (up to 30)
+
+            currentQIndex = 0;
+            score = 0;
+            streak = 0;
+            used5050 = false;
+            usedSecondChance = false;
+            hasSecondChanceActive = false;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            document.getElementById('totalQNum').innerText = activeQuestions.length;
+
+            updateLifelineUI();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            hasSecondChanceActive = false;
+            clearInterval(timerInterval);
+
+            const q = activeQuestions[currentQIndex];
+
+            // UI Updates
+            document.getElementById('currentQNum').innerText = currentQIndex + 1;
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('progressBar').style.width = `${((currentQIndex + 1) / activeQuestions.length) * 100}%`;
+
+            document.getElementById('explanationBox').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            // Render Options
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-option w-full p-3 rounded-xl text-left font-medium text-xs sm:text-sm text-slav-ink flex items-center justify-between shadow-sm`;
+                btn.onclick = () => selectOption(btn, opt);
+
+                const letter = ['А', 'Б', 'В', 'Г'][idx];
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-5 h-5 rounded-full bg-slav-darkParchment border border-slav-gold text-slav-red text-xs font-bold font-serif flex items-center justify-center flex-shrink-0">
+                            ${letter}
+                        </span>
+                        <span class="leading-tight">${opt.text}</span>
+                    </div>
+                    <span class="status-icon text-sm"></span>
+                `;
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Blitz Timer setup
+            const timerBadge = document.getElementById('timerBadge');
+            if (selectedMode === 'blitz') {
+                timerBadge.classList.remove('hidden');
+                timeLeft = 20;
+                timerBadge.innerText = `⏱️ ${timeLeft}s`;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerBadge.innerText = `⏱️ ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timeOutAnswer();
+                    }
+                }, 1000);
+            } else {
+                timerBadge.classList.add('hidden');
+            }
+        }
+
+        function updateLifelineUI() {
+            const btn5050 = document.getElementById('lifeline5050');
+            const btnSC = document.getElementById('lifelineSecondChance');
+
+            if (used5050) {
+                btn5050.classList.add('opacity-40', 'cursor-not-allowed');
+                btn5050.disabled = true;
+            }
+            if (usedSecondChance) {
+                btnSC.classList.add('opacity-40', 'cursor-not-allowed');
+                btnSC.disabled = true;
+            }
+        }
+
+        function use5050() {
+            if (used5050 || isAnswered) return;
+            used5050 = true;
+            playSound('click');
+            updateLifelineUI();
+
+            const q = activeQuestions[currentQIndex];
+            const allBtns = document.getElementById('optionsContainer').querySelectorAll('button');
+            
+            let wrongRemoved = 0;
+            q.options.forEach((opt, idx) => {
+                if (!opt.isCorrect && wrongRemoved < 2) {
+                    allBtns[idx].style.visibility = 'hidden';
+                    wrongRemoved++;
+                }
+            });
+        }
+
+        function useSecondChance() {
+            if (usedSecondChance || isAnswered) return;
+            usedSecondChance = true;
+            hasSecondChanceActive = true;
+            playSound('click');
+            updateLifelineUI();
+
+            document.getElementById('lifelineSecondChance').classList.add('ring-2', 'ring-slav-accentBlue');
+        }
+
+        function selectOption(selectedBtn, optionObj) {
+            if (isAnswered) return;
+
+            clearInterval(timerInterval);
+
+            if (optionObj.isCorrect) {
+                isAnswered = true;
+                score++;
+                streak++;
+                playSound('correct');
+
+                selectedBtn.classList.remove('bg-white');
+                selectedBtn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                selectedBtn.querySelector('.status-icon').innerText = '✅';
+
+                updateStreakUI();
+                finishQuestionTurn();
+            } else {
+                playSound('wrong');
+
+                if (hasSecondChanceActive) {
+                    hasSecondChanceActive = false;
+                    selectedBtn.disabled = true;
+                    selectedBtn.classList.add('opacity-40', 'bg-rose-50', 'border-rose-400');
+                    selectedBtn.querySelector('.status-icon').innerText = '❌';
+                    return; // Allow picking another option
+                }
+
+                isAnswered = true;
+                streak = 0;
+                updateStreakUI();
+
+                selectedBtn.classList.remove('bg-white');
+                selectedBtn.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900', 'animate-shake');
+                selectedBtn.querySelector('.status-icon').innerText = '❌';
+
+                // Reveal correct option
+                const q = activeQuestions[currentQIndex];
+                const allBtns = document.getElementById('optionsContainer').querySelectorAll('button');
+                q.options.forEach((opt, idx) => {
+                    if (opt.isCorrect) {
+                        allBtns[idx].classList.remove('bg-white');
+                        allBtns[idx].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                        allBtns[idx].querySelector('.status-icon').innerText = '✅';
+                    }
+                });
+
+                finishQuestionTurn();
+            }
+        }
+
+        function timeOutAnswer() {
+            if (isAnswered) return;
+            isAnswered = true;
+            streak = 0;
+            updateStreakUI();
+            playSound('wrong');
+
+            const q = activeQuestions[currentQIndex];
+            const allBtns = document.getElementById('optionsContainer').querySelectorAll('button');
+            q.options.forEach((opt, idx) => {
+                if (opt.isCorrect) {
+                    allBtns[idx].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                    allBtns[idx].querySelector('.status-icon').innerText = '✅';
+                }
+            });
+
+            finishQuestionTurn();
+        }
+
+        function updateStreakUI() {
+            const badge = document.getElementById('streakBadge');
+            document.getElementById('streakCount').innerText = streak;
+            badge.style.opacity = streak > 1 ? '1' : '0';
+        }
+
+        function finishQuestionTurn() {
+            const allBtns = document.getElementById('optionsContainer').querySelectorAll('button');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            const q = activeQuestions[currentQIndex];
+            document.getElementById('explanationText').innerText = q.explanation;
+            document.getElementById('explanationBox').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            currentQIndex++;
+
+            if (currentQIndex < activeQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            document.getElementById('resultPlayerName').innerText = playerName;
+            document.getElementById('finalScore').innerText = `${score}/${activeQuestions.length}`;
+
+            const percent = Math.round((score / activeQuestions.length) * 100);
+            document.getElementById('scorePercent').innerText = `${percent}% верных`;
+
+            let rank = "";
+            if (percent === 100) rank = "👑 Великий Магистр Русской Словесности";
+            else if (percent >= 80) rank = "📜 Хранитель Словарного Древа";
+            else if (percent >= 60) rank = "✒️ Знаток Грамоты и Правил";
+            else rank = "📖 Юный Исследователь Языка";
+
+            document.getElementById('rankTitle').innerText = rank;
+        }
+
+        function openCertificate() {
+            playSound('click');
+            document.getElementById('certPlayerName').innerText = playerName;
+            document.getElementById('certRank').innerText = document.getElementById('rankTitle').innerText;
+            
+            const today = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('certDate').innerText = `Дата: ${today}`;
+
+            document.getElementById('certificateModal').classList.remove('hidden');
+        }
+
+        function closeCertificate() {
+            playSound('click');
+            document.getElementById('certificateModal').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            playSound('click');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
